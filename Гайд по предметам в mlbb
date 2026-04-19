@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLBB — Все предметы (Полный гайд)</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#f0c040; --orange:#e8783a; --blue:#4a9eff; --green:#4ecb71;
+  --purple:#b06aff; --red:#ff4a4a; --teal:#2dd4bf; --pink:#f472b6;
+  --dark:#0c0e16; --darker:#07090f; --card:#121520; --card2:#161a26;
+  --border:#252a3a; --text:#c0c8dc; --dim:#5a6280; --white:#e8ecf8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--darker);color:var(--text);font-family:'Exo 2',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{background:linear-gradient(180deg,rgba(240,192,64,.1) 0%,transparent 100%);border-bottom:1px solid var(--border);padding:20px 16px 14px;text-align:center;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);background-color:rgba(7,9,15,.93)}
+header h1{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;color:var(--gold);letter-spacing:4px;text-transform:uppercase}
+header p{font-size:.68rem;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+
+/* CAT TABS */
+.cat-tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);background:var(--dark)}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;padding:11px 14px;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--dim);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.cat-tab:hover{color:var(--text)}
+.cat-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.cat-tab[data-cat=magic].active{color:#a78bfa;border-bottom-color:#a78bfa}
+.cat-tab[data-cat=defense].active{color:var(--blue);border-bottom-color:var(--blue)}
+.cat-tab[data-cat=movement].active{color:var(--teal);border-bottom-color:var(--teal)}
+.cat-tab[data-cat=jungle].active{color:var(--green);border-bottom-color:var(--green)}
+.cat-tab[data-cat=roam].active{color:var(--orange);border-bottom-color:var(--orange)}
+.cat-tab[data-cat=adaptive].active{color:var(--pink);border-bottom-color:var(--pink)}
+
+/* CONTROLS */
+.controls{padding:10px 12px 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--dark)}
+.search-box{flex:1;min-width:150px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-family:'Exo 2',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s}
+.search-box:focus{border-color:var(--gold)}
+.search-box::placeholder{color:var(--dim)}
+.role-filters{display:flex;gap:6px;flex-wrap:wrap}
+.rf-btn{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Exo 2',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;transition:all .18s;white-space:nowrap}
+.rf-btn:hover,.rf-btn.active{background:var(--gold);color:var(--darker);border-color:var(--gold)}
+
+/* STATS BAR */
+.statsbar{padding:6px 14px 10px;font-size:.68rem;color:var(--dim);letter-spacing:1px;text-transform:uppercase;background:var(--dark)}
+.statsbar span{color:var(--gold);font-weight:700}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr;gap:8px;padding:8px 10px 80px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 12px 10px;display:flex;gap:12px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;overflow:hidden;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.card::after{content:'';position:absolute;left:0;top:0;width:3px;height:100%;background:var(--gold);opacity:0;transition:opacity .2s}
+.card:hover{border-color:rgba(240,192,64,.3);background:var(--card2)}
+.card:hover::after,.card.open::after{opacity:1}
+.card.open{border-color:rgba(240,192,64,.4);background:var(--card2)}
+.card[data-cat=magic]:hover,.card[data-cat=magic].open{border-color:rgba(167,139,250,.35)}
+.card[data-cat=magic]::after{background:#a78bfa}
+.card[data-cat=defense]:hover,.card[data-cat=defense].open{border-color:rgba(74,158,255,.35)}
+.card[data-cat=defense]::after{background:var(--blue)}
+.card[data-cat=movement]:hover,.card[data-cat=movement].open{border-color:rgba(45,212,191,.35)}
+.card[data-cat=movement]::after{background:var(--teal)}
+.card[data-cat=jungle]:hover,.card[data-cat=jungle].open{border-color:rgba(78,203,113,.35)}
+.card[data-cat=jungle]::after{background:var(--green)}
+.card[data-cat=roam]:hover,.card[data-cat=roam].open{border-color:rgba(232,120,58,.35)}
+.card[data-cat=roam]::after{background:var(--orange)}
+.card[data-cat=adaptive]:hover,.card[data-cat=adaptive].open{border-color:rgba(244,114,182,.35)}
+.card[data-cat=adaptive]::after{background:var(--pink)}
+
+.item-icon{width:52px;height:52px;border-radius:10px;background:#1a1e2c;border:1px solid var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.item-icon img{width:100%;height:100%;object-fit:cover}
+.card-body{flex:1;min-width:0}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:2px}
+.iname{font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:700;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iname-ru{font-size:.7rem;color:var(--dim);margin-bottom:4px;font-style:italic}
+.icost{font-size:.68rem;color:var(--gold);font-weight:700;background:rgba(240,192,64,.1);padding:2px 7px;border-radius:10px;flex-shrink:0}
+.istats{font-size:.68rem;color:#707898;margin-bottom:5px}
+.tier{font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:1px;margin-right:4px}
+.t3{background:rgba(240,192,64,.12);color:var(--gold)}
+.t2{background:rgba(160,160,200,.1);color:#9090c0}
+.t1{background:rgba(100,180,100,.1);color:#70b070}
+.when{font-size:.78rem;color:var(--text);line-height:1.45}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.tag{font-size:.58rem;padding:2px 7px;border-radius:20px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.tag-mm{background:rgba(232,120,58,.14);color:#e8783a;border:1px solid rgba(232,120,58,.3)}
+.tag-fighter{background:rgba(192,57,43,.14);color:#e74c3c;border:1px solid rgba(192,57,43,.3)}
+.tag-ass{background:rgba(176,106,255,.14);color:#b06aff;border:1px solid rgba(176,106,255,.3)}
+.tag-tank{background:rgba(74,158,255,.14);color:#4a9eff;border:1px solid rgba(74,158,255,.3)}
+.tag-mage{background:rgba(167,139,250,.14);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+.tag-sup{background:rgba(78,203,113,.14);color:#4ecb71;border:1px solid rgba(78,203,113,.3)}
+.tag-jng{background:rgba(45,212,191,.14);color:#2dd4bf;border:1px solid rgba(45,212,191,.3)}
+.detail{display:none;margin-top:9px;padding:9px 11px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;font-size:.73rem;color:#8892b0;line-height:1.5}
+.detail strong{color:var(--gold)}
+.card.open .detail{display:block}
+.hint{font-size:.6rem;color:var(--dim);text-align:right;margin-top:4px}
+#noRes{text-align:center;padding:50px 20px;color:var(--dim);display:none}
+.fab{position:fixed;bottom:24px;right:18px;width:44px;height:44px;border-radius:50%;background:var(--gold);color:var(--darker);font-size:1.2rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(240,192,64,.35);z-index:200;transition:transform .2s}
+.fab:hover{transform:scale(1.1)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚔️ MLBB — Все предметы</h1>
+  <p>Патч 2.1.61 · 7 категорий · Полный гайд</p>
+</header>
+
+<div class="cat-tabs" id="catTabs">
+  <button class="cat-tab active" data-cat="all" onclick="setCategory('all',this)">🗂 Все</button>
+  <button class="cat-tab" data-cat="attack" onclick="setCategory('attack',this)">⚔️ Атака</button>
+  <button class="cat-tab" data-cat="magic" onclick="setCategory('magic',this)">✨ Магия</button>
+  <button class="cat-tab" data-cat="defense" onclick="setCategory('defense',this)">🛡️ Защита</button>
+  <button class="cat-tab" data-cat="adaptive" onclick="setCategory('adaptive',this)">🔀 Адаптивные</button>
+  <button class="cat-tab" data-cat="movement" onclick="setCategory('movement',this)">👟 Движение</button>
+  <button class="cat-tab" data-cat="jungle" onclick="setCategory('jungle',this)">🌲 Джангл</button>
+  <button class="cat-tab" data-cat="roam" onclick="setCategory('roam',this)">🗺 Роум</button>
+</div>
+
+<div class="controls">
+  <input class="search-box" type="text" id="search" placeholder="🔍 Поиск по названию или описанию..." oninput="buildCards()">
+  <div class="role-filters">
+    <button class="rf-btn active" data-role="all" onclick="setRole('all',this)">Все роли</button>
+    <button class="rf-btn" data-role="mm" onclick="setRole('mm',this)">🏹 MM</button>
+    <button class="rf-btn" data-role="fighter" onclick="setRole('fighter',this)">⚔️ Fighter</button>
+    <button class="rf-btn" data-role="ass" onclick="setRole('ass',this)">🗡 Assassin</button>
+    <button class="rf-btn" data-role="mage" onclick="setRole('mage',this)">✨ Mage</button>
+    <button class="rf-btn" data-role="tank" onclick="setRole('tank',this)">🛡 Tank</button>
+    <button class="rf-btn" data-role="sup" onclick="setRole('sup',this)">💚 Support</button>
+  </div>
+</div>
+
+<div class="statsbar">Показано: <span id="cnt">0</span> предметов</div>
+<div class="grid" id="grid"></div>
+<div id="noRes">Ничего не найдено 🔍</div>
+<button class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const IMG = 'https://mlbbhub.com/images/items/';
+// [slug, nameEN, nameRU, cost, tier, cat, stats, roles[], when, detail]
+const ITEMS = [
+
+// ══════════════ ATTACK ══════════════
+['blade-of-despair','Blade of Despair','Клинок Отчаяния',3010,'T3','attack','+160 Физ.АТК · +5% СД',['mm','fighter','ass'],
+'🎯 Берёшь для максимального физ.урона. При атаке врага ниже 50% HP получаешь +25% атаки на 2с. Лучший финальный предмет для MM/Assassin.',
+'<strong>Despair:</strong> Атака врага <50% HP → +25% Physical Attack на 2с (ДО нанесения урона). Даже добивающий удар получает бонус.'],
+
+['berserkers-fury','Berserker\'s Fury','Ярость Берсерка',2390,'T3','attack','+65 Физ.АТК · +25% Крит · +40% Крит.Урон',['mm'],
+'🎯 Берёшь если строишь крит-билд MM (Lesley, Miya, Karrie). Каждый крит → +5% Physical Attack на 2с. Обязателен в крит-сборках.',
+'<strong>Doom:</strong> Критический удар → +5% Physical Attack на 2с. Связка со Scarlet Phantom = постоянный крит+скорость.'],
+
+['scarlet-phantom','Scarlet Phantom','Алый Призрак',2020,'T3','attack','+30 Физ.АТК · +20% СкАт · +25% Крит',['mm'],
+'🎯 Берёшь в крит-билде MM. Крит повышает скорость атаки на 30% на 2с. Всегда бери вместе с Berserker\'s Fury.',
+'<strong>Frenzy:</strong> Критический удар → +30% Attack Speed на 2с. В крит-билде практически постоянный бафф.'],
+
+['windtalker','Windtalker','Ветровой Вещун',1830,'T3','attack','+35% СкАт · +20% Крит · +10% СД',['mm'],
+'🎯 Берёшь на ранней игре для крит MM. Каждые 3 атаки — дополнительный прыжок молнии на врагов рядом. Дешёвый крит-предмет.',
+'<strong>Typhoon:</strong> Каждые несколько атак → цепная молния на 3 ближайших врага (Magic Damage). Хорошо в командных файтах.'],
+
+['endless-battle','Endless Battle','Бесконечная Битва',2330,'T3','attack','+250 HP · +60 Физ.АТК · +10% КДР',['fighter','ass'],
+'🎯 Берёшь на Fighter или Assassin с активными скиллами (Chou, Khaleed, Yu Zhong). После скилла → следующая атака наносит True Damage.',
+'<strong>Divine Justice:</strong> После скилла → атака в 3с: 60% Physical ATK как True Damage (кд 1.5с). True Damage не блокируется.'],
+
+['malefic-roar','Malefic Roar','Злобный Рёв',2060,'T3','attack','+60 Физ.АТК · +40% Пробивание брони',['mm','fighter'],
+'🎯 Берёшь если у врагов много брони (2+ танка, Tigreal, Khufra). Пробивает физ.защиту. Обязателен против tank-heavy составов.',
+'<strong>Armor Buster:</strong> 40% Physical Penetration при атаке героев. Дополнительно пробивает башни. Выбирай вместо Malefic Gun если нужна чистая пенетрация.'],
+
+['malefic-gun','Malefic Gun','Злобная Пушка',2300,'T3','attack','+80 Физ.АТК · +30% Физ.Пенетрация · +12% Дальность',['mm'],
+'🎯 Берёшь на MM с длинной дальностью. Увеличивает радиус базовых атак на 12% и даёт 30% пробивания. После атаки +10% скорости на 0.5с.',
+'<strong>Armor Buster:</strong> +30% Physical Penetration + 12% Basic Attack Range + после атаки: +10% Movement Speed на 0.5с.'],
+
+['haass-claws','Haas\'s Claws','Когти Хааса',2020,'T3','attack','+40 Физ.АТК · +15% СкАт · +20% Крит',['mm','fighter'],
+'🎯 Берёшь в крит-билде для выживаемости. Критические удары дают +20% скорость атаки на 2с. Хороший баланс крит+скорость.',
+'<strong>Frenzy:</strong> Критический удар → +20% Attack Speed на 2с. Хорош в связке с Berserker\'s Fury для burst через крит.'],
+
+['sea-halberd','Sea Halberd','Морской Алебард',1950,'T3','attack','+80 Физ.АТК · +20% СкАт',['mm','fighter'],
+'🎯 Берёшь если у врагов мощный хил или регенерация (Esmeralda, Uranus, Ruby, Estes). Снижает хил/реген цели на 50% на 3с.',
+'<strong>Griefstrike:</strong> Атака по врагу → -50% хила и регена у цели на 3с. Аналог Necklace of Durance для физ.героев.'],
+
+['rose-gold-meteor','Rose Gold Meteor','Розово-Золотой Метеор',2060,'T3','attack','+60 Физ.АТК · +30% СкАт · +10% Вампиризм',['mm','fighter','ass'],
+'🎯 Берёшь если тебя убивают burst-уроном. При падении HP ниже 30% — щит + скорость + Hybrid Defense на 3с. Спасает жизнь.',
+'<strong>Demonize:</strong> HP < 30% → щит + Movement Speed + Hybrid Defense на 3с (кд 60с). Спасательный предмет против burst.'],
+
+['demon-hunter-sword','Demon Hunter Sword','Меч Охотника на Демонов',2180,'T3','attack','+35 Физ.АТК · +20% СкАт',['mm','fighter','ass'],
+'🎯 Берёшь против врагов с огромным HP (Esmeralda, Uranus, толстые танки). Каждая атака снимает 8% ТЕКУЩЕГО HP цели.',
+'<strong>Devour:</strong> Базовые атаки → 8% текущего HP цели как Physical Damage (макс 60 по крипам). Чем толще враг — тем лучше работает.'],
+
+['blade-of-the-heptaseas','Blade of the Heptaseas','Клинок Семи Морей',1950,'T3','attack','+250 HP · +70 Физ.АТК',['ass','fighter'],
+'🎯 Берёшь если открываешь бой из засады (Lancelot, Hayabusa, Saber). 5с без боя → первая атака: бонусный урон + слоу 40%.',
+'<strong>Ambush:</strong> 5с без боя → следующая атака: +160 + 40% Physical ATK + слоу 40% на 1.5с. Идеальный opener для assassin.'],
+
+['corrosion-scythe','Corrosion Scythe','Коса Коррозии',2050,'T3','attack','+30 Физ.АТК · +30% СкАт · +5% СД',['mm','fighter'],
+'🎯 Берёшь если хочешь замедлять врагов атаками. До 5 стаков слоу = 40% замедление. Контрит мобильных героев.',
+'<strong>Corrosion:</strong> Каждая атака: +80 доп.урон + 8% слоу (4% для дальних) на 1.5с. До 5 стаков = 40% замедление.'],
+
+['wind-of-nature','Wind of Nature','Ветер Природы',2010,'T3','attack','+30 Физ.АТК · +20% СкАт · +10% Вампиризм',['mm','fighter'],
+'🎯 Берёшь против физических burst-убийц (Aldous, Zilong). Активный: 2 секунды ПОЛНОГО иммунитета к физическому урону.',
+'<strong>Активный (кд 70с):</strong> 2с иммунитет к Physical Damage. Используй в момент ульта Aldous или Saber.'],
+
+['golden-staff','Golden Staff','Золотой Посох',2000,'T3','attack','+55 Физ.АТК · +15% СкАт',['mm','fighter'],
+'🎯 Берёшь если хочешь конвертировать крит в скорость атаки. Каждый 1% крит-шанса = +1% скорость атаки. Убирает рандом крита.',
+'<strong>Swift:</strong> Каждые 1% Crit Chance → +1% Attack Speed. Каждые 2 крит-атаки → бонусная атака без задержки. Идеален на Miya.'],
+
+['hunter-strike','Hunter Strike','Удар Охотника',2010,'T3','attack','+80 Физ.АТК · +10% КДР',['fighter','ass'],
+'🎯 Берёшь на Fighter/Assassin которому нужно догонять врагов. После 5 атак → +50% скорости движения на 3с. Хорош на Paquito.',
+'<strong>Retribution:</strong> 5 атак по герою/крипу → +50% Movement Speed на 3с (кд 8с). Помогает в chase и escape.'],
+
+['great-dragon-spear','Great Dragon Spear','Великое Драконье Копьё',2140,'T3','attack','+70 Физ.АТК · +20% Крит · +10% КДР',['fighter'],
+'🎯 Берёшь на Fighter с мощным ультимейтом. После ульта → +30% скорости движения на 7.5с. Хорош на Freya, Lapu-Lapu.',
+'<strong>Supreme Warrior:</strong> После Ultimate → +30% Movement Speed на 7.5с (кд 15с). Хороший chase-инструмент после ульта.'],
+
+['war-axe','War Axe','Боевой Топор',2000,'T3','attack','+550 HP · +20 Физ.АТК · +10% КДР',['fighter'],
+'🎯 Берёшь на Fighter который долго остаётся в бою (Dyrroth, Thamuz, Ruby). Каждую секунду боя набирает стаки атаки+пенетрации.',
+'<strong>Fighting Spirit:</strong> В бою каждую 1с: +8 Physical Attack + 1% Physical Penetration (до 8 стаков). Для prolonged fights.'],
+
+['thunderbelt','Thunderbelt','Пояс Грома',2290,'T3','attack','+500 HP · +30 Физ.АТК · +10% КДР',['fighter','tank'],
+'🎯 Берёшь на Танко-Файтеров (Chou, Jawhead). После скилла → атака замедляет на 80% и наносит True Damage на основе физ.защиты.',
+'<strong>Thunderclap:</strong> После скилла → следующая атака: (50 + 100% Physical DEF) True Damage + слоу 80% на 1.5с.'],
+
+['fleeting-time','Fleeting Time','Мимолётное Время',2050,'T3','adaptive','+600 HP · +15% КДР',['fighter','ass','mage'],
+'🎯 Берёшь если ультимейт — твоё главное оружие (Fanny, Kagura, Roger). Килл/ассист снижают КД ульта на 30%. Огромное значение в файтах.',
+'<strong>Timestream:</strong> Килл или ассист → текущий кд Ultimate -30%. В командных файтах ульт практически всегда готов.'],
+
+['swift-boots','Swift Boots','Быстрые Ботинки',710,'T3','attack','+40 СД · +15% СкАт',['mm','fighter'],
+'🎯 Берёшь на MM если нужна скорость атаки вместо пенетрации или защиты. Дешёвые и эффективные.',
+'Стандартные ботинки для MM и атак-файтеров когда другие бонусы не нужны.'],
+
+['dagger','Dagger','Кинжал',250,'T1','attack','+15 Физ.АТК',['ass','fighter','mm'],
+'🎯 Самый дешёвый физ.урон. Стартовый компонент для многих предметов. Берёшь в начале игры.',
+'T1 компонент. Строится в Fury Hammer и другие Attack T2/T3 предметы.'],
+
+['javelin','Javelin','Дротик',320,'T1','attack','+8% Крит',['mm'],
+'🎯 Самый дешёвый крит. Стартовый компонент для Berserker\'s Fury и Scarlet Phantom.',
+'T1 компонент. Главный старт крит-билда для MM.'],
+
+['knife','Knife','Нож',280,'T1','attack','+10% СкАт',['mm','fighter'],
+'🎯 Дешёвый компонент скорости атаки. Ускоряет фарм крипов. Строится в Corrosion Scythe.',
+'T1 компонент. Строится в атак-спид предметы T2/T3.'],
+
+['iron-hunting-bow','Iron Hunting Bow','Железный Охотничий Лук',450,'T1','attack','+10 Физ.АТК · +5% КДР',['mm','ass'],
+'🎯 Ранний компонент для атаки и кулдауна. Строится в Hunter Strike и Malefic Roar.',
+'T1 компонент. Хорошее начало для assassin с кулдауном.'],
+
+['fury-hammer','Fury Hammer','Молот Ярости',830,'T2','attack','+35 Физ.АТК',['fighter','ass'],
+'🎯 T2 промежуточный предмет. Строится в Hunter Strike и другие финальные предметы.',
+'T2 компонент. Хорошее значение физ.атаки в ранней игре.'],
+
+['expert-gloves','Expert Gloves','Перчатки Эксперта',500,'T1','attack','-',['mm','mage'],
+'🎯 Нишевый предмет. Конвертирует Crit Chance в Magic Power для гибридных героев.',
+'Уникальный T1: каждый 1% Crit Chance → Magic Power. Нишевый, берётся на специфичных героях.'],
+
+// ══════════════ MAGIC ══════════════
+['holy-crystal','Holy Crystal','Святой Кристалл',3000,'T3','magic','+185 Маг.Сила',['mage'],
+'🎯 Берёшь если хочешь максимальный магический урон. +21-35% бонусной Magic Power (растёт с уровнем). Один из лучших маг-предметов.',
+'<strong>Mystery:</strong> +21%-35% дополнительной Magic Power (скейлится с уровнем). Обязателен в поздней игре для мага.'],
+
+['wishing-lantern','Wishing Lantern','Желающий Фонарь',2300,'T3','magic','+75 Маг.Сила · +400 Мана · +10% КДР',['mage'],
+'🎯 Берёшь на мага с большим уроном по одной цели. За каждые 800 Magic Damage по врагу — вызывается Богиня Бабочки, снимающая 8% текущего HP.',
+'<strong>Butterfly Goddess:</strong> Каждые 800 Magic Damage → призыв, наносящий 8% текущего HP цели как Magic Damage. Мощно против жирных героев.'],
+
+['lightning-truncheon','Lightning Truncheon','Молниеносная Дубина',2090,'T3','magic','+75 Маг.Сила · +300 Мана · +20% КДР',['mage'],
+'🎯 Берёшь на мага с большим запасом маны и AOE скиллами (Pharsa, Vale). Каждые 6с атака бьёт 3 врагов цепной молнией.',
+'<strong>Thunderbolt:</strong> Каждые 6с → цепная молния на 3 цели: урон = 20% Max Mana. Отлично против сгруппированных врагов.'],
+
+['starlium-scythe','Starlium Scythe','Звёздный Серп',2100,'T3','magic','+80 Маг.Сила · +10% КДР · +5% Вампиризм',['mage','fighter'],
+'🎯 Берёшь на мага который часто использует скиллы (Harith, Cecilion). После скилла → следующая атака: True Damage + скорость движения.',
+'<strong>Crisis:</strong> 3с после скилла → следующая атака: +100 (+100% Magic Power) True Damage + кратковременно +10% Movement Speed.'],
+
+['concentrated-energy','Concentrated Energy','Сконцентрированная Энергия',2020,'T3','magic','+400 HP · +70 Маг.Сила',['mage','tank'],
+'🎯 Берёшь на мага которому нужна выживаемость + хил от скиллов. Стаки Magic Power → +12% Magic Damage при максе.',
+'<strong>Recharge:</strong> Каждый удар скилла → +5 Magic Power (до 6 стаков). При максе стаков → +12% Magic Damage на 3с.'],
+
+['genius-wand','Genius Wand','Жезл Гения',2000,'T3','magic','+75 Маг.Сила · +5% СД',['mage'],
+'🎯 Берёшь если у врагов СРЕДНЯЯ магзащита. Снижает Magic DEF цели при каждой атаке. Хорошо для prolonged damage.',
+'<strong>Magic:</strong> Урон по врагу → -3+(0.3*уровень) Magic DEF на 2с, до 3 стаков. Итого ~9-27 пенетрации постепенно.'],
+
+['divine-glaive','Divine Glaive','Божественная Глефа',1970,'T3','magic','+60 Маг.Сила',['mage'],
+'🎯 Берёшь если у врагов МНОГО Magic DEF (400+). Пробивание масштабируется от самой защиты цели. Контрит magic-танков.',
+'<strong>Spellbreaker:</strong> 0.1% Magic Pen за каждую единицу Magic DEF цели, макс 20%. Выбирай вместо Genius Wand против очень жирных.'],
+
+['glowing-wand','Glowing Wand','Светящийся Жезл',2150,'T3','magic','+400 HP · +75 Маг.Сила · +5% СД',['mage','sup'],
+'🎯 Берёшь для постоянного DOT-урона через поджог. Скилл поджигает врага: 1% его макс.HP/сек на 3с. Снижает реген врага.',
+'<strong>Scorch:</strong> Скилл → поджог 3с: 1% Max HP цели/сек как Magic Damage. Также снижает HP-реген/щит цели на 50%.'],
+
+['ice-queen-wand','Ice Queen Wand','Жезл Ледяной Королевы',2040,'T3','magic','+300 HP · +75 Маг.Сила · +10% Вампиризм',['mage','sup'],
+'🎯 Берёшь если хочешь контролировать позиционирование врагов скиллами. 3 стака слоу = 30% замедление на цели.',
+'<strong>Ice Bound:</strong> Скилл по врагу → 10% слоу на 2с, до 3 стаков (кд 1с на стак). Идеален на Aurora, Nana, Vexana.'],
+
+['blood-wings','Blood Wings','Кровавые Крылья',2100,'T3','magic','+90 Маг.Сила',['mage'],
+'🎯 Берёшь на мага в поздней игре как защитный предмет. Даёт огромный щит = 800 + 100% Magic Power. Обновляется через 20с.',
+'<strong>Guard:</strong> Щит = 800 + 100% Magic Power. Обновляется через 20с после урона. Щит → +30 СД, при уничтожении → +150 СД на 1с.'],
+
+['necklace-of-durance','Necklace of Durance','Ожерелье Дюрейнса',1870,'T3','magic','+40 Маг.Сила · +10% КДР · +5% Вампиризм',['mage','sup'],
+'🎯 Берёшь если у врагов МНОГО хила (Rafaela, Estes, Uranus, Esmeralda). Снижает хил цели на 50% на 3с от скиллов.',
+'<strong>Life Drain:</strong> Скилл по врагу → -50% хила у цели на 3с. Обязателен против sustain-heavy составов.'],
+
+['enchanted-talisman','Enchanted Talisman','Зачарованный Талисман',1870,'T3','magic','+250 HP · +50 Маг.Сила · +20% КДР',['mage','sup'],
+'🎯 Берёшь если маг быстро тратит ману (Harith, Cyclops, Chang\'e). +20% CDR — самый высокий бонус кулдауна в одном предмете.',
+'<strong>Mana Spring:</strong> +15% Max Mana за каждые 10с. +20% CDR. Максимальный CDR с этим предметом — 45% вместо обычных 40%.'],
+
+['feather-of-heaven','Feather of Heaven','Перо Небес',2030,'T3','magic','+55 Маг.Сила · +20% СкАт · +5% КДР',['mage'],
+'🎯 Берёшь на мага который атакует базовыми атаками (Kimmy, Zhask, Yve). Каждая атака наносит 50 + 30% Magic Power допурона.',
+'<strong>Affliction:</strong> Базовые атаки → +50 (+30% Magic Power) Magic Damage. Идеален на Kimmy и атак-спид магах.'],
+
+['clock-of-destiny','Clock of Destiny','Часы Судьбы',2030,'T3','magic','+400 HP · +445 Мана · +10% КДР',['mage','tank'],
+'🎯 Берёшь на мага с большим запасом маны. Урон по героям даёт стаки защиты. Хороший tanky-mage предмет.',
+'<strong>Destiny:</strong> Урон по героям → 4.5(+0.5*уровень) Hybrid DEF на 5с (до 6 стаков). Кд 0.4с на стак.'],
+
+['flask-of-the-oasis','Flask of the Oasis','Фляга Оазиса',1850,'T3','magic','+300 HP · +60 Маг.Сила · +10% КДР',['sup','mage'],
+'🎯 Берёшь ТОЛЬКО на Support-хилера. Хил союзника с HP < 35% → даёт щит + снижает кд скиллов на 2с. Мощно на Estes.',
+'<strong>Blessing:</strong> Хил/щит союзника с HP <35% → щит (100*уровень) + -2с кд скиллов (кд 60с на цель).'],
+
+['azure-blade','Azure Blade','Лазурный Клинок',600,'T2','magic','+5% КДР · +5 Рег.Маны',['mage','fighter'],
+'🎯 T2 компонент. После скилла → следующая атака: +50 True Damage. Хороший ранний предмет.',
+'<strong>Judgement:</strong> 3с после скилла → атака +50 True Damage (кд 1.5с). Строится в Starlium Scythe.'],
+
+['elegant-gem','Elegant Gem','Элегантный Самоцвет',700,'T2','magic','+300 HP · +380 Мана',['mage','tank'],
+'🎯 T2 компонент. Когда HP или Мана падают ниже 50% — восстанавливает 15% за 3с. Хорошая выживаемость.',
+'<strong>Gift:</strong> HP/Мана <50% → +15% восстановления за 3с (кд 60с). T2 компонент.'],
+
+['exotic-veil','Exotic Veil','Экзотическая Вуаль',600,'T2','magic','+30 Маг.Сила · +5% СД',['mage'],
+'🎯 T2 промежуточный компонент. Немного Magic Power и скорости движения.',
+'T2 компонент. Строится в Blood Wings и другие Magic T3 предметы.'],
+
+['book-of-sages','Book of Sages','Книга Мудрецов',450,'T1','magic','+8 Маг.Сила · +5% КДР',['mage','sup'],
+'🎯 Дешёвый стартовый компонент для магов. Немного маны и кулдауна.',
+'T1 компонент. Строится в Enchanted Talisman и другие Magic предметы.'],
+
+['lantern-of-hope','Lantern of Hope','Фонарь Надежды',0,'T1','magic','+20 Маг.Сила · +2% КДР · +4% СД',['mage','fighter'],
+'🎯 БЕСПЛАТНЫЙ стартовый предмет. Характеристики растут с уровнем героя. Отличный старт для магов.',
+'Бесплатный T1 предмет, масштабируется с уровнем. Один из лучших стартов для mage.'],
+
+['flower-of-hope','Flower of Hope','Цветок Надежды',0,'T1','magic','-',['mage','fighter'],
+'🎯 Бесплатный T1. Каждые 6с следующий скилл или атака наносит 60 + 30% ATK + 30% Magic Power доп.Magic Damage.',
+'<strong>Flower of Hope:</strong> Каждые 6с → +60(+30% Physical ATK)(+30% Magic Power) Magic Damage от следующего скилла/атаки.'],
+
+// ══════════════ DEFENSE ══════════════
+['immortality','Immortality','Бессмертие',2120,'T3','defense','+800 HP · +15 Физ.Защ',['tank','fighter','mm','ass'],
+'🎯 Берёшь когда тебя постоянно убивают. После смерти воскресаешь через 2.5с с 16% HP + щитом. КД 210с.',
+'<strong>Immortal:</strong> Воскрешение через 2.5с: 16% Max HP + щит 220-1200 (по уровню) на 3с. КД 3.5 мин. Берут все carry в поздней игре.'],
+
+['antique-cuirass','Antique Cuirass','Античный Кирасс',2170,'T3','defense','+920 HP · +40 Физ.Защ · +4 Рег.HP',['tank','fighter'],
+'🎯 Берёшь против физ.героев которые спамят скиллы (Lesley, Claude). Каждый скилл снижает их Physical Damage на 6%, до 3 стаков.',
+'<strong>Deter:</strong> Скилл по тебе → -6% Physical Damage атакующему на 2с (до 3 стаков = -18%). Мощный контр физ-сплешеров.'],
+
+['athenas-shield','Athena\'s Shield','Щит Афины',2150,'T3','defense','+900 HP · +48 Маг.Защ · +2 Рег.HP',['tank','fighter','mm'],
+'🎯 Берёшь против магов с burst-уроном (Eudora, Aurora, Lunox). При получении Magic Damage — 25% снижение маг.урона на 3с.',
+'<strong>Shield:</strong> Получение Magic Damage → -25% Magic Damage на 3с (ДО расчёта). Обновляется через 5с после боя.'],
+
+['dominance-ice','Dominance Ice','Лёд Господства',2010,'T3','defense','+500 Мана · +55 Физ.Защ · +5% СД',['tank','sup'],
+'🎯 Берёшь против MM-тяжёлых составов (Karrie, Clint, Bruno). Снижает скорость атаки всех врагов рядом. Также снижает хил.',
+'<strong>Arctic Cold:</strong> При получении урона → скорость атаки врага -20% на 1с. Дополнительно снижает HP-реген/щит врагов рядом на 50%.'],
+
+['blade-armor','Blade Armor','Клинковая Броня',1910,'T3','defense','+70 Физ.Защита',['tank'],
+'🎯 Берёшь если у врага сильный ММ с базовыми атаками. Отражает 30% входящего физ.урона обратно + слоу 15% на 1с.',
+'<strong>Bladed Armor:</strong> При базовой атаке по тебе → 30% входящего урона + 20% Physical DEF как Physical Damage обратно + слоу 15%.'],
+
+['guardian-helmet','Guardian Helmet','Шлем Стража',2200,'T3','defense','+1550 HP · +20 Рег.HP',['tank','fighter'],
+'🎯 Берёшь для максимального HP-регена вне боя. 2.5% Max HP/сек когда не атакуют. Лучший регенеративный предмет для танков.',
+'<strong>Recovery:</strong> +2.5% Max HP/сек (снижается до 0.5%/сек на 5с после урона). Идеален на Akai, Tigreal, Lolita.'],
+
+['cursed-helmet','Cursed Helmet','Проклятый Шлем',1910,'T3','defense','+1200 HP · +20 Маг.Защ',['tank','fighter'],
+'🎯 Берёшь для пассивного AOE-урона поблизости. 1.2% Max HP/сек по всем врагам рядом. Отлично в групповых сражениях.',
+'<strong>Burning Soul:</strong> 1.2% Max HP/сек Magic Damage всем соседним врагам. +125-350 по крипам (по уровню).'],
+
+['brute-force-breastplate','Brute Force Breastplate','Нагрудник Грубой Силы',1870,'T3','defense','+600 HP · +20 Физ.Защ · +10% КДР',['tank','fighter'],
+'🎯 Берёшь на активного танка или файтера. Во время боя набирает стаки атаки, скорости движения и контр-иммунитета.',
+'<strong>Brute Force:</strong> В бою каждую 1с: +6 Adaptive Attack + 2% Movement Speed (до 6 стаков). При максе → +15% CC Duration Reduction.'],
+
+['radiant-armor','Radiant Armor','Сияющая Броня',1800,'T3','defense','+800 HP · +52 Маг.Защ · +6 Рег.HP',['tank','fighter'],
+'🎯 Берёшь против магов с постоянным уроном (Alice, Chang\'e, Zhask). Чем больше Magic Damage получаешь — тем выше Magic DEF.',
+'<strong>Holy Blessing:</strong> При получении Magic Damage → +6 Magic DEF на 4с (до 8 стаков = +48 Magic DEF). Для sustained magic fights.'],
+
+['oracle','Oracle','Оракул',1890,'T3','defense','+850 HP · +36 Маг.Защ · +10% КДР',['tank','sup','fighter'],
+'🎯 Берёшь если у тебя или союзников есть хил/щит. Увеличивает все Shield и HP Regen эффекты на 30%. Контрит Dominance Ice.',
+'<strong>Bless:</strong> +30% к ВСЕМ Shield и HP Regen эффектам. Обязателен на саппортах с хилом и танках с большим реген.'],
+
+['twilight-armor','Twilight Armor','Доспехи Сумерек',2020,'T3','defense','+1200 HP · +20 Физ.Защ',['tank','fighter'],
+'🎯 Берёшь против героев с огромным единовременным уроном (Aldous). Снижает любой урон выше 600 единиц за раз.',
+'Уникальный пассив: любой урон превышающий 600 за один удар → снижается до 600. Жёсткий контр Aldous и больших burst-ультов.'],
+
+['queens-wings','Queen\'s Wings','Крылья Королевы',2250,'T3','defense','+15 Адапт.АТК · +700 HP · +10% КДР · +10% Вампиризм',['fighter','ass'],
+'🎯 Берёшь на Fighter/Assassin для выживаемости в критическом состоянии. HP < 40% → -30% входящего урона на 3с + -2с кд скиллов.',
+'<strong>Demonize:</strong> HP <40% → 30% Damage Reduction на 3с + -2с кд скиллов (кд 60с). Также: +0.25% урона за каждый 1% потерянного HP, до 15%.'],
+
+['chastise-pauldron','Chastise Pauldron','Наплечник Наказания',2100,'T3','defense','+1800 HP · +40 Физ.Защ',['tank'],
+'🎯 Берёшь против быстрых атакующих MM (Karrie, Ling). При получении урона снижает скорость атаки врага до 75% на 2с.',
+'<strong>Chastise:</strong> При получении урона → скорость атаки И её лимит у врага снижается до 75% на 2с. Жёсткий контр Karrie.'],
+
+['immortality-copy','Immortality','Бессмертие',2120,'T3','defense','+800 HP · +40 Физ.Защ',['mm','ass'],
+'🎯 Берёшь как carry если тебя фокусят. Один шанс на жизнь = один шанс выиграть бой. КД 3.5 мин.',
+'Carry-версия Immortality. Не покупай если умираешь чаще чем раз в 3 мин — не успеет перезарядиться.'],
+
+['ares-belt','Ares Belt','Пояс Ареса',900,'T2','defense','+770 HP',['tank','fighter'],
+'🎯 T2 компонент. Чистый HP буст. Строится в Antique Cuirass и другие Defense T3.',
+'T2 компонент. Хорошее HP значение в начале-середине игры.'],
+
+['black-ice-shield','Black Ice Shield','Щит Чёрного Льда',880,'T2','defense','+20 Гибридная Защ',['tank','mage'],
+'🎯 T2 компонент. При получении урона снижает скорость атаки врага. Строится в финальные Defense предметы.',
+'<strong>Arctic Cold:</strong> При получении урона → скорость атаки врага -10% на 1с. T2 компонент.'],
+
+['dreadnaught-armor','Dreadnaught Armor','Броня Дредноута',730,'T2','defense','+30 Физ.Защита',['tank','fighter'],
+'🎯 T2 компонент. Строится в Antique Cuirass. Снижает Physical ATK атакующего при попадании скилла.',
+'<strong>Deter:</strong> Скилл по тебе → -4% Physical ATK атакующему на 2с (до 3 стаков). T2 компонент.'],
+
+['hero-s-ring','Hero\'s Ring','Кольцо Героя',450,'T1','defense','+150 HP · +5% КДР',['tank','fighter','mage'],
+'🎯 Дешёвый T1 предмет. HP + кулдаун. Хорошее начало для tanks и fighters.',
+'T1 компонент. Строится в Defense и Attack T2/T3 предметы.'],
+
+['healing-necklace','Healing Necklace','Ожерелье Исцеления',140,'T1','defense','+4 Рег.HP',['tank','sup'],
+'🎯 Самый дешёвый предмет в игре. Небольшой HP реген. Стартовый компонент для tanks.',
+'T1 компонент. Строится в Defense предметы. Помогает в очень ранней игре.'],
+
+// ══════════════ ADAPTIVE ══════════════
+['winter-crown','Winter Crown','Зимняя Корона',2250,'T3','adaptive','+15 Адапт.АТК · +500 HP · +10% КДР',['mage','fighter','ass'],
+'🎯 Берёшь если тебя постоянно CC-ируют и убивают. Активный: 2с ты НЕУЯЗВИМ к атакам и скиллам врагов, но не можешь двигаться.',
+'<strong>Активный (кд 100с):</strong> 2с полной неуязвимости — нельзя двигаться и использовать скиллы. Используй для пропуска ульта врага.'],
+
+['sky-piercer','Sky Piercer','Пронзатель Неба',2050,'T3','adaptive','+20 Адапт.АТК · +10% СД',['ass','fighter'],
+'🎯 Берёшь на Assassin для добивания врагов с низким HP. Инстакилл врага с низким HP + стаки до 10 раз → огромный бонус.',
+'<strong>Пассив:</strong> Мгновенно убивает врагов ниже определённого HP порога. Каждый стак (до 10) увеличивает этот порог. Специфический предмет.'],
+
+// ══════════════ MOVEMENT ══════════════
+['warrior-boots','Warrior Boots','Ботинки Воина',720,'T3','movement','+40 СД · +22 Физ.Защ',['tank','fighter'],
+'🎯 Берёшь против физ.состава (много MM и физ.файтеров). При получении базовых атак временно растёт физзащита.',
+'<strong>Valor:</strong> При базовой атаке по тебе → +5 Physical DEF на 3с (до 5 стаков = +25). Лучшие ботинки против MM-heavy.'],
+
+['tough-boots','Tough Boots','Прочные Ботинки',720,'T3','movement','+40 СД · +25% Снижение КК',['tank','fighter','sup'],
+'🎯 Берёшь если у врагов МНОГО контроля (stun, slow, root). -25% длительности всех CC эффектов. Обязателен против stun-heavy.',
+'25% CC Reduction — лучший способ выжить против Tigreal, Atlas, Franco, Aurora. Обязателен если враги полны контроля.'],
+
+['arcane-boots','Arcane Boots','Магические Ботинки',690,'T3','movement','+40 СД · +10% Маг.Пробивание',['mage','sup'],
+'🎯 Берёшь на мага или саппорта. Даёт Magic Penetration. Обязательны если у врагов средняя/высокая магзащита.',
+'10% Magic Penetration + скорость. Стандартные ботинки мага. Альтернатива — Demon Boots если проблемы с маной.'],
+
+['demon-boots','Demon Boots','Ботинки Демона',720,'T3','movement','+40 СД · +10 Рег.Маны',['mage','sup'],
+'🎯 Берёшь на мага/саппорта с проблемами маны. Убийство/ассист крипа → +4% маны. Решает ману в ранней игре.',
+'<strong>Mysticism:</strong> Убийство/ассист крипа → +4% Max Mana. Хорошо решает mana hunger в начале игры.'],
+
+['magic-shoes','Magic Shoes','Магические Туфли',710,'T3','movement','+40 СД · +10% КДР',['mage','sup','fighter'],
+'🎯 Берёшь если кулдаун важнее пенетрации. +10% CDR уже с ботинок — хорошее начало для скилл-зависимых героев.',
+'10% Cooldown Reduction от ботинок. Особенно полезны для героев которые живут за счёт постоянных скиллов.'],
+
+['swift-boots-mv','Swift Boots','Быстрые Ботинки',710,'T3','movement','+40 СД · +15% СкАт',['mm','fighter'],
+'🎯 Берёшь на MM если нужна скорость атаки вместо CDR или пенетрации. Дешёвые и эффективные.',
+'Стандартные ботинки для MM и атак-файтеров.'],
+
+['rapid-boots','Rapid Boots','Быстрые Ботинки Роуминга',750,'T3','movement','+80 СД',['sup','tank'],
+'🎯 Берёшь на роумера/саппорта которому нужно быстро перемещаться по карте. Самая высокая скорость движения в игре.',
+'<strong>Пассив:</strong> +80 Movement Speed — самые быстрые ботинки. Скорость снижается при атаке/получении урона. Идеальны для ганг-саппорта.'],
+
+['boots','Boots','Ботинки',250,'T1','movement','+20 СД',['tank','fighter','mage','mm','ass','sup'],
+'🎯 Базовые ботинки T1. Первый шаг ко всем финальным ботинкам. Берёшь в начале игры.',
+'T1 компонент. Все финальные ботинки (T3) строятся из этого предмета.'],
+
+['allow-throw','Allow Throw','Разрешить Бросок',0,'T1','movement','-',['tank','fighter'],
+'🎯 ТОЛЬКО если играешь с Jawhead в команде. Позволяет союзнику Jawhead метнуть тебя как снаряд.',
+'<strong>Trust:</strong> Позволяет Jawhead использовать тебя как снаряд через Ejector. Необходим для комбо с Jawhead.'],
+
+['broken-heart','Broken Heart','Разбитое Сердце',0,'T1','movement','-',['tank','fighter','mage','mm','ass','sup'],
+'🎯 Анти-Cecilion предмет. Запрещает Cecilion применять на тебя Moonlit Waltz (особое партнёрство).',
+'<strong>Heart Broken:</strong> Cecilion не может применять Moonlit Waltz на тебя. Нишевый контр-предмет против Cecilion.'],
+
+// ══════════════ JUNGLE ══════════════
+['flame-retribution','Flame Retribution','Огненное Возмездие',0,'T1','jungle','-',['ass','fighter','mm'],
+'🎯 Берёшь если играешь Jungler и нужен контр по атаке. Активный: 100 True Damage + крадёт ATK/Magic Power врага на 4с.',
+'<strong>Активный:</strong> 100 True Damage по герою + кража 58-100 Physical ATK и Magic Power на 4с. Стакается с навыком Retribution. Лучший для физ.junglers.'],
+
+['ice-retribution','Ice Retribution','Ледяное Возмездие',0,'T1','jungle','-',['tank','sup','mage'],
+'🎯 Берёшь если играешь Jungler и нужен контроль. Активный: 100 True Damage + крадёт скорость движения врага на 4с.',
+'<strong>Активный:</strong> 100 True Damage + кража 72-100 Movement Speed на 4с. Для utility/control junglers.'],
+
+['bloody-retribution','Bloody Retribution','Кровавое Возмездие',0,'T1','jungle','-',['tank','fighter'],
+'🎯 Берёшь если играешь Jungler и нужна выживаемость в дуэлях. Активный: 100 True Damage + кража HP на 4с.',
+'<strong>Активный:</strong> 100 True Damage + кража HP = 250 + 20% Extra HP на 4с. Лучший для duel-junglers.'],
+
+// ══════════════ ROAM ══════════════
+['conceal','Conceal','Маскировка',0,'T1','roam','-',['sup','tank'],
+'🎯 Берёшь на Support для скрытной инициации. Активный: союзники рядом становятся невидимыми на 5с + до 60% скорости движения.',
+'<strong>Активный (кд ~120с):</strong> Ты + союзники рядом → невидимость 5с (или до первой атаки/урона) + 24-60% Movement Speed. Строится с Encourage/Favor/Dire Hit.'],
+
+['encourage','Encourage','Поддержка',0,'T1','roam','-',['sup'],
+'🎯 Стартовый предмет Support. Первые 8 мин отдаёшь золото/опыт от крипов союзникам. Строится в финальные Roam предметы.',
+'<strong>Devotion:</strong> Первые 8 мин: отказываешься от EXP/Gold с крипов — всё идёт ближайшим союзникам. Базовый предмет саппорта.'],
+
+['favor','Favor','Расположение',0,'T1','roam','-',['sup'],
+'🎯 Стартовый предмет Support-хилера. Ауры усиливают реген и щиты союзников. Строится в Flask of Oasis.',
+'<strong>Devotion:</strong> Первые 8 мин: передаёшь EXP/Gold союзникам. Дополнительно усиливает хилы и щиты на союзниках с низким HP.'],
+
+['dire-hit','Dire Hit','Смертельный Удар',0,'T1','roam','-',['sup','tank'],
+'🎯 Стартовый предмет Support/Tank-роумера. Дополнительный Hybrid Damage по врагам с низким HP от союзников.',
+'<strong>Devotion:</strong> Первые 8 мин: передаёшь EXP/Gold союзникам. Дополнительно усиливает урон союзников по врагам с HP < 30%.'],
+];
+
+let currentCat = 'all';
+let currentRole = 'all';
+const seenSlugs = new Set();
+
+function buildCards() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  seenSlugs.clear();
+  let count = 0;
+  const query = document.getElementById('search').value.toLowerCase();
+
+  ITEMS.forEach((item, idx) => {
+    const [slug, nameEN, nameRU, cost, tier, cat, stats, roles, when, detail] = item;
+    if (seenSlugs.has(slug)) return;
+    seenSlugs.add(slug);
+
+    const catMatch = currentCat === 'all' || cat === currentCat;
+    const roleMatch = currentRole === 'all' || roles.includes(currentRole) || roles.includes('all');
+    const searchMatch = !query || nameEN.toLowerCase().includes(query) || nameRU.toLowerCase().includes(query) || when.toLowerCase().includes(query) || (detail && detail.toLowerCase().includes(query));
+
+    if (!catMatch || !roleMatch || !searchMatch) return;
+    count++;
+
+    const tierClass = tier === 'T3' ? 't3' : tier === 'T2' ? 't2' : 't1';
+    const tagMap = {mm:'tag-mm',fighter:'tag-fighter',ass:'tag-ass',mage:'tag-mage',tank:'tag-tank',sup:'tag-sup',jng:'tag-jng'};
+    const labelMap = {mm:'MM',fighter:'Fighter',ass:'Assassin',mage:'Mage',tank:'Tank',sup:'Support',jng:'Jungle'};
+    const tagsHTML = roles.filter(r=>r!=='all').map(r=>`<span class="tag ${tagMap[r]||''}">${labelMap[r]||r}</span>`).join('');
+
+    const imgSrc = `${IMG}${slug}.png`;
+    const costLabel = cost > 0 ? `💰 ${cost}` : '🆓';
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.cat = cat;
+    card.style.animationDelay = `${Math.min((count-1)*0.025, 0.5)}s`;
+    card.onclick = () => card.classList.toggle('open');
+    card.innerHTML = `
+      <div class="item-icon">
+        <img src="${imgSrc}" alt="${nameEN}" onerror="this.parentElement.innerHTML='🎁'">
+      </div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="iname">${nameEN}</span>
+          <span class="icost">${costLabel}</span>
+        </div>
+        <div class="iname-ru">${nameRU}</div>
+        <div class="istats"><span class="tier ${tierClass}">${tier}</span>${stats}</div>
+        <div class="when">${when}</div>
+        <div class="tags">${tagsHTML}</div>
+        <div class="detail">${detail}</div>
+        <div class="hint">нажми для деталей ▾</div>
+      </div>`;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('cnt').textContent = count;
+  document.getElementById('noRes').style.display = count === 0 ? 'block' : 'none';
+}
+
+function setCategory(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCards();
+}
+
+function setRole(role, btn) {
+  currentRole = role;
+  document.querySelectorAll('.rf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCards();
+}
+
+buildCards();
+</script>
+</body>
+</html>
